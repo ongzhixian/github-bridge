@@ -37,9 +37,9 @@ jobs:
             DestinationPath = $publish_file_path
           }
           Compress-Archive @archive_specs -Force
-          $awsProfile = 'default'
+          
           Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
-          $listFunctionsResponse = aws lambda list-functions --profile $awsProfile | ConvertFrom-Json
+          $listFunctionsResponse = aws lambda list-functions | ConvertFrom-Json
           $functionNameList = $listFunctionsResponse.Functions | Select-Object -ExpandProperty FunctionName
 
       - name: List files (for debugging)
