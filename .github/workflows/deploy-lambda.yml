@@ -39,15 +39,11 @@ jobs:
           Compress-Archive @archive_specs -Force
           $awsProfile = 'default'
           Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
+          $listFunctionsResponse = aws lambda list-functions --profile $awsProfile | ConvertFrom-Json
+          $functionNameList = $listFunctionsResponse.Functions | Select-Object -ExpandProperty FunctionName
 
       - name: List files (for debugging)
         run: ls -R
-
-      - name: Deploy Static Site to S3 Bucket
-        run: |
-          Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
-          $listFunctionsResponse = aws lambda list-functions --profile $awsProfile | ConvertFrom-Json
-          $functionNameList = $listFunctionsResponse.Functions | Select-Object -ExpandProperty FunctionName
 
 
       # - name: Deploy Lambda Function
