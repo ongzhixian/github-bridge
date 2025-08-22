@@ -28,16 +28,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy AWS Lambda Function
+      - name: Packaging Lambda Function
         run: |
           $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
-          [string[]]$file_list = Get-ChildItem .\src\aws_lambdas\
+          [string[]]$file_list = Get-ChildItem ${{ vars.LAMBDA_SRC_FILE_PATH }}
           $archive_specs = @{
             Path = $file_list
             DestinationPath = $publish_file_path
           }
           Compress-Archive @archive_specs -Force
           
+      - name: Deploy AWS Lambda Function
+        run: |
           Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
           $listFunctionsResponse = aws lambda list-functions | ConvertFrom-Json
           $functionNameList = $listFunctionsResponse.Functions | Select-Object -ExpandProperty FunctionName
