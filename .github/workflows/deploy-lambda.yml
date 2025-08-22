@@ -28,9 +28,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy Static Site to S3 Bucket
+      - name: Deploy AWS Lambda Function
         run: |
-          $publish_file_path = './aws-lambda.zip'
+          $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
           [string[]]$file_list = Get-ChildItem .\src\aws_lambdas\
           $archive_specs = @{
             Path = $file_list
