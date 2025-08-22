@@ -28,6 +28,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      # Note: Kept for reference; This offers a more customizable way to package the Lambda function.
+      #       Unfortunately, there does not seem to be a way to expose the resulting zip file as an artifact.
+      #       Using `actions/upload-artifact` to package this zip file will result a nested zip file (zip file of zip file) result.
+      #       So, we are using `actions/upload-artifact` to package the source files instead.
       # - name: Packaging Lambda Function
       #   run: |
       #     $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
@@ -41,9 +45,9 @@ jobs:
       - name: Create AWS Lambda Function Package Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: aws-lambda-package
-          path: ${{ vars.LAMBDA_SRC_FILE_PATH }}
-
+          name: aws-lambda-package                # Name of the artifact (aws-lambda-package.zip)
+          path: |                                 # Note: Use unix style path (./). Does not work with Windows style path (.\).
+            ${{ vars.LAMBDA_SRC_FILE_PATH }}  
           
       - name: Deploy AWS Lambda Function
         run: |
