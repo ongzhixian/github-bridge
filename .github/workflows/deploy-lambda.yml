@@ -49,11 +49,12 @@ jobs:
           path: |                                 # Note: Use unix style path (./). Does not work with Windows style path (.\).
             ${{ vars.LAMBDA_SRC_FILE_PATH }}  
           
-      - name: Deploy AWS Lambda Function
-        run: |
-          Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
-          $listFunctionsResponse = aws lambda list-functions | ConvertFrom-Json
-          $functionNameList = $listFunctionsResponse.Functions | Select-Object -ExpandProperty FunctionName
+      # *Pukes* -- Let's see if this works
+      - name: Download AWS Lambda Function Package Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aws-lambda-package
+          path: ./publish
 
       - name: List files (for debugging)
         run: ls -R
