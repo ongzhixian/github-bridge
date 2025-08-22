@@ -28,21 +28,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Packaging Lambda Function
-        run: |
-          $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
-          [string[]]$file_list = Get-ChildItem ${{ vars.LAMBDA_SRC_FILE_PATH }}
-          $archive_specs = @{
-            Path = $file_list
-            DestinationPath = $publish_file_path
-          }
-          Compress-Archive @archive_specs -Force
+      # - name: Packaging Lambda Function
+      #   run: |
+      #     $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
+      #     [string[]]$file_list = Get-ChildItem ${{ vars.LAMBDA_SRC_FILE_PATH }}
+      #     $archive_specs = @{
+      #       Path = $file_list
+      #       DestinationPath = $publish_file_path
+      #     }
+      #     Compress-Archive @archive_specs -Force
 
       - name: Create AWS Lambda Function Package Artifact
         uses: actions/upload-artifact@v4
         with:
           name: aws-lambda-package
-          path: ${{ vars.LAMBDA_ZIP_FILE_PATH }}
+          path: ${{ vars.LAMBDA_SRC_FILE_PATH }}
+
           
       - name: Deploy AWS Lambda Function
         run: |
