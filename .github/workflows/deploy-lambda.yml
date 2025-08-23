@@ -53,7 +53,20 @@ jobs:
           name: aws-lambda-package                # Name of the artifact (aws-lambda-package.zip)
           path: |                                 # Note: Use unix style path (./). Does not work with Windows style path (.\).
             ${{ vars.LAMBDA_SRC_FILE_PATH }}  
+
+      - name: Deploy AWS Lambda Function
+        run: |
+          $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
+          Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
+          $listFunctionsResponse = aws lambda list-functions | ConvertFrom-Json
+          aws lambda create-function `
+          --function-name bridge_example `
+          --runtime python3.10 `
+          --zip-file fileb://$publish_file_path `
+          --handler github_service.example `
+          --role ${{ vars.AWS_LAMBDA_ROLE_ARN }}
           
+
       # Note: Kept for reference; Use for testing what happens when we download the artifact.
       #       Originally, we use the `actions/upload-artifact@v4` to create deployment package and expose it as artifact.
       #       The thought was that we can then reuse the artifact in another workflow to deploy the Lambda function.
