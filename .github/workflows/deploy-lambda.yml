@@ -32,29 +32,39 @@ jobs:
       #       Unfortunately, there does not seem to be a way to expose the resulting zip file as an artifact.
       #       Using `actions/upload-artifact` to package this zip file will result a nested zip file (zip file of zip file) result.
       #       So, we are using `actions/upload-artifact` to package the source files instead.
-      # - name: Packaging Lambda Function
-      #   run: |
-      #     $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
-      #     [string[]]$file_list = Get-ChildItem ${{ vars.LAMBDA_SRC_FILE_PATH }}
-      #     $archive_specs = @{
-      #       Path = $file_list
-      #       DestinationPath = $publish_file_path
-      #     }
-      #     Compress-Archive @archive_specs -Force
+      #       However, we later find that we cannot reference the result zip file created by `actions/upload-artifact`
+      #       *roll-eyes and give-up* So doing double packaging instead.
+      - name: Packaging Lambda Function
+        run: |
+          $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
+          [string[]]$file_list = Get-ChildItem ${{ vars.LAMBDA_SRC_FILE_PATH }}
+          $archive_specs = @{
+            Path = $file_list
+            DestinationPath = $publish_file_path
+          }
+          Compress-Archive @archive_specs -Force
 
-      - name: Create AWS Lambda Function Package Artifact
+      # Note: Create artifact; More of a proof-of-concept step in this example
+      #       The common use-case is to expose what we are packaging as distributables.
+      #       Arguably we can view this elsewhere in the case of AWS Lambda but what other tech stack may be more limiting.
+      - name: Create AWS Lambda Function artifact
         uses: actions/upload-artifact@v4
         with:
           name: aws-lambda-package                # Name of the artifact (aws-lambda-package.zip)
           path: |                                 # Note: Use unix style path (./). Does not work with Windows style path (.\).
             ${{ vars.LAMBDA_SRC_FILE_PATH }}  
           
-      # *Pukes* -- Let's see if this works
-      - name: Download AWS Lambda Function Package Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: aws-lambda-package
-          path: ./publish
+      # Note: Kept for reference; Use for testing what happens when we download the artifact.
+      #       Originally, we use the `actions/upload-artifact@v4` to create deployment package and expose it as artifact.
+      #       The thought was that we can then reuse the artifact in another workflow to deploy the Lambda function.
+      #       However, it seems that the resulting artifact cannot be made available.
+      #       `actions/download-artifact@v4` extracts the contents of the zip file; it does not download the artifact (zip file) itself.
+      #       So, we go back to the terrible idea of doing packaging twice.
+      # - name: Download AWS Lambda Function Package Artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: aws-lambda-package
+      #     path: ./publish
 
       - name: List files (for debugging)
         run: ls -R
