@@ -58,7 +58,7 @@ jobs:
         run: |
           $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
           Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
-          $listFunctionsResponse = aws lambda list-functions --profile $awsProfile | ConvertFrom-Json
+          $listFunctionsResponse = aws lambda list-functions | ConvertFrom-Json
           $functionNameList = $listFunctionsResponse.Functions | Select-Object -ExpandProperty FunctionName
           if ($functionNameList -contains 'bridge_example_test') {
             Write-Host "TODO: Updating existing Lambda function"
