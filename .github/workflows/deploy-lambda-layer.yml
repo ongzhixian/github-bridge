@@ -43,7 +43,7 @@ jobs:
           Set-Variable temp_layer_folder_path -Option Constant -Value './temp-layer'
           $pip_output_path = Join-Path $temp_layer_folder_path "$layer_name/python"
           New-Item -ItemType Directory -Path $pip_output_path
-          pip.exe install -r .\src\aws_lambda_layers\$($layer_name)_requirements.txt --target $pip_output_path
+          pip.exe install -r ./src/aws_lambda_layers/$($layer_name)_layer_requirements.txt --target $pip_output_path
 
           Set-Variable publish_folder_path -Option Constant -Value './publish'
           $publish_filename = "$($layer_name).zip"
