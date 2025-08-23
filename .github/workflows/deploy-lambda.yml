@@ -58,14 +58,13 @@ jobs:
         run: |
           $publish_file_path = '${{ vars.LAMBDA_ZIP_FILE_PATH }}'
           Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
-          $listFunctionsResponse = aws lambda list-functions | ConvertFrom-Json
-          aws lambda create-function `
-          --function-name bridge_example_test `
-          --runtime python3.10 `
-          --zip-file fileb://$publish_file_path `
-          --handler github_service.example `
-          --role ${{ vars.AWS_LAMBDA_ROLE_ARN }}
-          
+          $listFunctionsResponse = aws lambda list-functions --profile $awsProfile | ConvertFrom-Json
+          $functionNameList = $listFunctionsResponse.Functions | Select-Object -ExpandProperty FunctionName
+          if ($functionNameList -contains 'bridge_example_test') {
+            Write-Host "TODO: Updating existing Lambda function"
+          } else {
+            Write-Host "TODO: Creating new Lambda function"
+          }
 
       # Note: Kept for reference; Use for testing what happens when we download the artifact.
       #       Originally, we use the `actions/upload-artifact@v4` to create deployment package and expose it as artifact.
