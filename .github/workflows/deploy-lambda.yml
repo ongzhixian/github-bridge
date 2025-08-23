@@ -60,7 +60,7 @@ jobs:
           Write-Host "Publishing to AWS Lambda with profile: $awsProfile"
           $listFunctionsResponse = aws lambda list-functions | ConvertFrom-Json
           aws lambda create-function `
-          --function-name bridge_example `
+          --function-name bridge_example_test `
           --runtime python3.10 `
           --zip-file fileb://$publish_file_path `
           --handler github_service.example `
