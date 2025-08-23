@@ -61,9 +61,18 @@ jobs:
           $listFunctionsResponse = aws lambda list-functions | ConvertFrom-Json
           $functionNameList = $listFunctionsResponse.Functions | Select-Object -ExpandProperty FunctionName
           if ($functionNameList -contains 'bridge_example_test') {
-            Write-Host "TODO: Updating existing Lambda function"
+            Write-Host "Updating existing Lambda function"
+            aws lambda update-function-code `
+            --function-name bridge_example_test `
+            --zip-file fileb://$publish_file_path | ConvertFrom-Json
           } else {
-            Write-Host "TODO: Creating new Lambda function"
+            Write-Host "Creating new Lambda function"
+            aws lambda create-function `
+            --function-name bridge_example_test `
+            --runtime python3.10 `
+            --zip-file fileb://$publish_file_path `
+            --handler github_service.example `
+            --role ${{ vars.AWS_LAMBDA_ROLE_ARN }}
           }
 
       # Note: Kept for reference; Use for testing what happens when we download the artifact.
