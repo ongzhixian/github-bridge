@@ -49,5 +49,6 @@ jobs:
           Set-Variable publish_folder_path -Option Constant -Value './publish'
           $publish_filename = "$($layer_name).zip"
           $publish_file_path = Join-Path $publish_folder_path $publish_filename
+          New-Item -ItemType Directory -Path $publish_folder_path
           Compress-Archive $pip_output_path -DestinationPath $publish_file_path -Force
 
