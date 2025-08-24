@@ -56,6 +56,17 @@ jobs:
           path: |                                 # Note: Use unix style path (./). Does not work with Windows style path (.\).
             ${{ vars.LAMBDA_LAYER_BUILD_FILE_PATH }}
 
+      - name: Deploy AWS Lambda Layer
+        run: |
+          $layer_name = 'example_layer'
+          $ZipFilePath = '${{ vars.LAMBDA_LAYER_ZIP_FILE_PATH }}'
+          aws lambda publish-layer-version `
+          --layer-name $layer_name `
+          --zip-file fileb://$ZipFilePath `
+          --description "Layer for sending HTTP requests" `
+          --compatible-runtimes python3.10 `
+          --compatible-architectures x86_64 `
+          --license-info AGPL-3.0-or-later
 
       - name: List files (for debugging)
         run: ls -R
