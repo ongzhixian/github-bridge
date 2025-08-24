@@ -9,6 +9,10 @@ on:
       - 'README.md' # Ignores changes to the README.md file
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - "src/aws_lambda_layers/**"
+      - ".github/workflows/deploy-lambda-layer.yml"
+      - 'README.md' # Ignores changes to the README.md file
   workflow_dispatch:
 
 jobs:

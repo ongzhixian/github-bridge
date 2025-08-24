@@ -40,10 +40,11 @@ jobs:
       - name: Install dependencies
         run: |
           $layer_name = 'example'
-          Set-Variable temp_layer_folder_path -Option Constant -Value '${{ vars.LAMBDA_LAYER_FILE_PATH }}'
+          Set-Variable temp_layer_folder_path -Option Constant -Value '${{ vars.LAMBDA_LAYER_BUILD_FILE_PATH }}'
           $pip_output_path = Join-Path $temp_layer_folder_path "$layer_name/python"
           New-Item -ItemType Directory -Path $pip_output_path
-          $layer_requirements_path = Join-Path $temp_layer_folder_path "$($layer_name)_layer_requirements.txt"
+          $layer_requirements_path = Join-Path '${{ vars.LAMBDA_LAYER_SRC_FILE_PATH }}' "$($layer_name)_layer_requirements.txt"
+          Write-Host $layer_requirements_path
           pip install -r $layer_requirements_path --target $pip_output_path
 
           Compress-Archive $pip_output_path -DestinationPath '${{ vars.LAMBDA_LAYER_ZIP_FILE_PATH }}' -Force
@@ -53,7 +54,7 @@ jobs:
         with:
           name: aws-lambda-layer                  # Name of the artifact (aws-lambda-layer.zip)
           path: |                                 # Note: Use unix style path (./). Does not work with Windows style path (.\).
-            ${{ vars.LAMBDA_LAYER_FILE_PATH }}
+            ${{ vars.LAMBDA_LAYER_BUILD_FILE_PATH }}
 
 
       - name: List files (for debugging)
