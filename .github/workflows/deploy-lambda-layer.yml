@@ -20,6 +20,31 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Ensures we get the previous commit for diff
+
+      - name: Detect workflow file changes
+        id: check
+        run: |
+        run: |
+          $changedFiles = git diff --name-only HEAD^ HEAD
+          Write-Host "Changed files:`n$changedFiles"
+
+          $workflowChanged = $false
+          foreach ($file in $changedFiles -split "`n") {
+            if ($file -like ".github/workflows/*") {
+              $workflowChanged = $true
+              exit 1
+            }
+          }
+
+          if ($workflowChanged) {
+            Write-Host "Workflow file was changed."
+            echo "::set-output name=workflow_changed::true"
+          } else {
+            Write-Host "No workflow file changes detected."
+            echo "::set-output name=workflow_changed::"
+          }
 
       - name: List files (for debugging)
         run: ls -R
