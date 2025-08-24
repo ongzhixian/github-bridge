@@ -3,6 +3,10 @@ name: Continuous Integration (Lambda)
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - "src/aws_lambda_layers/**"
+      - ".github/workflows/deploy-lambda-layer.yml"
+      - 'README.md' # Ignores changes to the README.md file
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
