@@ -26,7 +26,6 @@ jobs:
       - name: Detect workflow file changes
         id: check
         run: |
-        run: |
           $changedFiles = git diff --name-only HEAD^ HEAD
           Write-Host "Changed files:`n$changedFiles"
 
